@@ -1,0 +1,132 @@
+class Node:
+    def __init__(self, nama, jenis, usia, jumlah):
+        self.nama = nama
+        self.jenis = jenis
+        self.usia = usia
+        self.jumlah = jumlah
+        self.next = None
+
+class Peternakan:
+    def __init__(self):
+        self.head = None
+
+    def tambah_hewan(self, nama, jenis, usia, jumlah):
+        new_node = Node(nama, jenis, usia, jumlah)
+        if not self.head:
+            self.head = new_node
+            new_node.next = new_node  
+        else:
+            current = self.head
+            while current.next != self.head:
+                current = current.next
+            current.next = new_node
+            new_node.next = self.head
+
+    def lihat_hewan(self):
+        if not self.head:
+            return "Peternakan kosong."
+        current = self.head
+        hewan_dict = {}
+        while True:
+            hewan_dict[current.nama] = {
+                'jenis': current.jenis,
+                'usia': current.usia,
+                'jumlah': current.jumlah
+            }
+            current = current.next
+            if current == self.head:
+                break
+        return hewan_dict
+
+    def cari_node(self, nama):
+        if not self.head:
+            return None
+        current = self.head
+        while True:
+            if current.nama == nama:
+                return current
+            current = current.next
+            if current == self.head:
+                break
+        return None
+
+    def update_hewan(self, nama, jenis, usia, jumlah):
+        node = self.cari_node(nama)
+        if node:
+            node.jenis = jenis
+            node.usia = usia
+            node.jumlah = jumlah
+            return f"Data {nama} berhasil diperbarui."
+        else:
+            return f"{nama} tidak ditemukan di peternakan."
+
+    def hapus_hewan(self, nama):
+        if not self.head:
+            return f"{nama} tidak ditemukan di peternakan."
+        
+        if self.head.nama == nama:
+            if self.head.next == self.head:
+                self.head = None
+            else:
+                current = self.head
+                while current.next != self.head:
+                    current = current.next
+                current.next = self.head.next
+                self.head = self.head.next
+            return f"{nama} berhasil dihapus dari peternakan."
+
+        prev = None
+        current = self.head
+        while True:
+            if current.nama == nama:
+                prev.next = current.next
+                return f"{nama} berhasil dihapus dari peternakan."
+            prev = current
+            current = current.next
+            if current == self.head:
+                break
+
+        return f"{nama} tidak ditemukan di peternakan."
+
+    def quick_sort(self, arr):
+        if len(arr) <= 1:
+            return arr
+        pivot = arr[len(arr) // 2]
+        left = [x for x in arr if x < pivot]
+        middle = [x for x in arr if x == pivot]
+        right = [x for x in arr if x > pivot]
+        return self.quick_sort(left) + middle + self.quick_sort(right)
+
+    def sort_hewan_by_nama(self):
+        if not self.head:
+            return "Peternakan kosong."
+        current = self.head
+        nama_list = []
+        while True:
+            nama_list.append(current.nama)
+            current = current.next
+            if current == self.head:
+                break
+        sorted_nama_list = self.quick_sort(nama_list)
+        sorted_hewan_dict = {}
+        for nama in sorted_nama_list:
+            node = self.cari_node(nama)
+            sorted_hewan_dict[node.nama] = {
+                'jenis': node.jenis,
+                'usia': node.usia,
+                'jumlah': node.jumlah
+            }
+        return sorted_hewan_dict
+
+
+peternakan_saya = Peternakan()
+peternakan_saya.tambah_hewan('Sapi', 'Sapi Limosin', 3, 7)
+peternakan_saya.tambah_hewan('Ayam', 'Ayam Kampung', 4, 18)
+
+print(peternakan_saya.lihat_hewan())
+
+print(peternakan_saya.update_hewan('Sapi', 'Sapi Peranakan', 8, 12))
+
+print(peternakan_saya.hapus_hewan('Ayam'))
+
+print(peternakan_saya.sort_hewan_by_nama())
